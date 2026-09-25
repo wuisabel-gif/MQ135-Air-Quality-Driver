@@ -1,4 +1,4 @@
-# MQ135-Photon
+# MQ135-Air-Quality-Driver
 
 MQ-135 air quality / hazardous gas sensor driver for **Particle** (Photon,
 Argon, Boron, P1, Electron) **and Arduino** (Uno, Nano, Mega, and, with
