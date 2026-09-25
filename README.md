@@ -8,6 +8,10 @@ Converts the sensor's analog output to resistance and to a gas concentration
 in ppm (CO2-equivalent by default) using the datasheet curve, with optional
 temperature/humidity correction.
 
+<p align="center">
+  <img src="docs/mq135.png" alt="MQ-135 sensor module" width="320">
+</p>
+
 ## Hardware
 
 Any MQ-135 breakout works. One ready-made module is the Olimex SNS-MQ135:
