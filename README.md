@@ -57,6 +57,10 @@ On a 5V Arduino, AOUT connects directly and the divider stays at 1.0.
 4. `#include "MQ135.h"` in your source, then **Particle: Compile/Flash** from
    the palette.
 
+<p align="center">
+  <img src="docs/workbench-install.webp" alt="Installing the library in Particle Workbench" width="600">
+</p>
+
 You can also add it from the terminal in your project folder:
 
 ```bash
