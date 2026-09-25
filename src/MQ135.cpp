@@ -6,12 +6,12 @@ MQ135::MQ135(int pin, float rzero, float rload)
     pinMode(_pin, INPUT);
 }
 
-// Sensor resistance from the divider: Vpin = adc/ADC_MAX * VREF,
+// Sensor resistance from the divider: Vpin = adc/adcMax * vref,
 // Vsensor_out = Vpin * divider, Rs = RL * (Vsupply - Vout) / Vout.
 float MQ135::getResistance() {
     int adc = analogRead(_pin);
     if (adc <= 0) return NAN;                 // shorted / unpowered
-    float vout = (adc / MQ135_ADC_MAX) * MQ135_ADC_VREF * _divider;
+    float vout = (adc / _adcMax) * _vref * _divider;
     if (vout <= 0 || vout >= _supply) return NAN;
     return _rload * (_supply - vout) / vout;
 }

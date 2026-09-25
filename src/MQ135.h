@@ -1,24 +1,34 @@
 /*
- * MQ135.h - MQ-135 air quality / gas sensor driver for Particle devices.
+ * MQ135.h - MQ-135 air quality / gas sensor driver for Particle and Arduino.
  *
  * Reads the analog output of an MQ-135 module and converts the sensor
  * resistance into a gas concentration (ppm) using the datasheet curve.
  * Default curve constants are tuned for CO2.
  *
- * Photon/Argon ADC is 12-bit (0..4095) referenced to 3.3V. MQ-135 modules
- * are usually powered at 5V and their AOUT can swing above 3.3V. Feed AOUT
- * through a divider (or level shift) so the pin never exceeds 3.3V, and set
- * the divider ratio with setVoltageDivider(). See README.
+ * ADC differs by board: Particle (Photon/Argon/Boron) is 12-bit (0..4095)
+ * at 3.3V; a classic 5V Arduino (Uno/Nano/Mega) is 10-bit (0..1023) at 5V.
+ * The right defaults are chosen at compile time. For anything else (ESP32,
+ * SAMD, 3.3V AVR, external ADC) call setADC(counts, vref).
+ *
+ * MQ-135 modules are usually powered at 5V and their AOUT can swing above a
+ * 3.3V pin. On 3.3V boards feed AOUT through a divider so the pin never
+ * exceeds its reference, and set the ratio with setVoltageDivider().
  */
 #pragma once
 
-#include "Particle.h"
+#if defined(PARTICLE) || defined(SPARK)
+  #include "Particle.h"
+  #define MQ135_DEFAULT_ADC_MAX  4095.0  // 12-bit
+  #define MQ135_DEFAULT_VREF     3.3
+#else
+  #include "Arduino.h"
+  #define MQ135_DEFAULT_ADC_MAX  1023.0  // 10-bit classic AVR
+  #define MQ135_DEFAULT_VREF     5.0
+#endif
 
-// Curve/board defaults. Override in the constructor or with the setters.
+// Board defaults. Override in the constructor or with the setters.
 #define MQ135_DEFAULT_RLOAD      10.0   // load resistor on the module, kOhm
 #define MQ135_DEFAULT_RZERO      76.63  // Rs in clean air (calibrate per sensor!)
-#define MQ135_ADC_MAX            4095.0 // 12-bit Particle ADC
-#define MQ135_ADC_VREF           3.3    // ADC reference voltage
 #define MQ135_SUPPLY_VOLTAGE     5.0    // MQ-135 heater/sensor supply
 
 // CO2 curve: ppm = PARA * (Rs/Rzero) ^ -PARB
@@ -41,6 +51,10 @@ public:
     explicit MQ135(int pin,
                    float rzero = MQ135_DEFAULT_RZERO,
                    float rload = MQ135_DEFAULT_RLOAD);
+
+    // ADC full-scale counts and reference voltage. Defaults are set by the
+    // board; call this for ESP32/SAMD/3.3V-AVR or an external ADC.
+    void setADC(float counts, float vref) { _adcMax = counts; _vref = vref; }
 
     // Supply voltage of the sensor and the divider ratio (Vsensor/Vpin).
     // Example: a 5V AOUT through a 3.3k/1.8k divider gives ratio ~2.83.
@@ -68,6 +82,8 @@ private:
     float _rload;
     float _supply  = MQ135_SUPPLY_VOLTAGE;
     float _divider = 1.0;
+    float _adcMax  = MQ135_DEFAULT_ADC_MAX;
+    float _vref    = MQ135_DEFAULT_VREF;
 
     float getCorrectionFactor(float t, float h);
 };
