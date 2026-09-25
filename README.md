@@ -8,7 +8,12 @@ Converts the sensor's analog output to resistance and to a gas concentration
 in ppm (CO2-equivalent by default) using the datasheet curve, with optional
 temperature/humidity correction.
 
-## Wiring
+## Hardware
+
+Any MQ-135 breakout works. One ready-made module is the Olimex SNS-MQ135:
+https://www.digikey.com/en/products/detail/olimex-ltd/SNS-MQ135/21662411
+
+### Wiring
 
 | MQ-135 module | Board |
 |---------------|-------|
@@ -35,6 +40,37 @@ gas.setVoltageDivider(2.83); // Vsensor / Vpin
 ```
 
 On a 5V Arduino, AOUT connects directly and the divider stays at 1.0.
+
+## Install in VS Code
+
+### Particle (Particle Workbench)
+
+1. Install the **Particle Workbench** extension from the VS Code Marketplace.
+2. Open the command palette (Cmd/Ctrl+Shift+P) → **Particle: Create Project**
+   (or open an existing one).
+3. Command palette → **Particle: Install Library**, type
+   `MQ135-Air-Quality-Driver`, press Enter. It is added to `project.properties`.
+4. `#include "MQ135.h"` in your source, then **Particle: Compile/Flash** from
+   the palette.
+
+You can also add it from the terminal in your project folder:
+
+```bash
+particle library add MQ135-Air-Quality-Driver
+```
+
+### Arduino (PlatformIO in VS Code)
+
+Add the GitHub repo as a dependency in `platformio.ini`:
+
+```ini
+lib_deps = https://github.com/wuisabel-gif/MQ135-Air-Quality-Driver.git
+```
+
+### Arduino IDE / Arduino for VS Code
+
+Download the repo as a ZIP from GitHub, then in the Arduino IDE:
+**Sketch → Include Library → Add .ZIP Library** and pick the downloaded file.
 
 ## Usage
 
